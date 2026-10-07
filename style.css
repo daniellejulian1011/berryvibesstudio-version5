@@ -928,3 +928,46 @@ html.onboarding-root body::-webkit-scrollbar,
 .age-wheel-shell{cursor:ns-resize}
 .onboarding-page .height-range{pointer-events:none!important}
 .height-experience:focus-visible{outline:3px solid rgba(255,71,99,.35);outline-offset:6px;border-radius:28px}
+
+/* =========================================================
+   V6.7 · TRUE SMOOTH ONBOARDING PICKERS
+   No step re-animation while height / age values change.
+   ========================================================= */
+.onboarding-page .height-big{min-width:min(520px,72vw);justify-content:center;contain:layout style}
+.onboarding-page .height-big strong{
+  display:inline-block;min-width:3.35ch;text-align:center;
+  font-variant-numeric:tabular-nums lining-nums;
+  transform:translateZ(0);backface-visibility:hidden;
+  transition:color .18s ease!important;
+}
+.onboarding-page .height-big span{min-width:82px;font-variant-numeric:tabular-nums}
+.onboarding-page .height-ruler i{transition:top .14s cubic-bezier(.2,.75,.25,1)!important;will-change:top;transform:translateZ(0)}
+.onboarding-page .age-wheel{
+  width:220px;min-height:300px;grid-template-rows:repeat(5,1fr);
+  align-content:center;contain:layout style;transform:translateZ(0);
+}
+.onboarding-page .age-wheel span{
+  width:100%;min-height:54px;display:grid;place-items:center;
+  font-variant-numeric:tabular-nums lining-nums;
+  line-height:1!important;transform:translateZ(0);
+  transition:color .16s ease,font-size .18s cubic-bezier(.2,.75,.25,1),opacity .16s ease!important;
+}
+.onboarding-page .age-wheel span:not(.selected){opacity:.64}
+.onboarding-page .age-wheel span.selected{opacity:1}
+.onboarding-page .height-experience,
+.onboarding-page .age-wheel-shell{will-change:auto;transform:translateZ(0);backface-visibility:hidden}
+.onboarding-page .onboarding-step.active .height-big,
+.onboarding-page .onboarding-step.active .height-ruler,
+.onboarding-page .onboarding-step.active .age-wheel{animation-fill-mode:both}
+
+/* once a picker is being interacted with, never replay its entrance animation */
+.onboarding-page .height-experience:active .height-big,
+.onboarding-page .height-experience:focus-within .height-big,
+.onboarding-page .age-wheel-shell:active .age-wheel,
+.onboarding-page .age-wheel-shell:focus-within .age-wheel{animation:none!important}
+
+@media(max-width:700px){
+  .onboarding-page .height-big{min-width:min(360px,76vw)}
+  .onboarding-page .age-wheel{width:180px;min-height:260px}
+  .onboarding-page .age-wheel span{min-height:46px}
+}
