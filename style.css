@@ -971,3 +971,57 @@ html.onboarding-root body::-webkit-scrollbar,
   .onboarding-page .age-wheel{width:180px;min-height:260px}
   .onboarding-page .age-wheel span{min-height:46px}
 }
+
+/* =========================================================
+   V6.8 · DAILY FASTING CALCULATIONS
+   ========================================================= */
+.fasting-daily-card{margin:22px 0;overflow:hidden;position:relative}
+.fasting-daily-card::after{content:"";position:absolute;inset:auto -10% -55% 45%;height:260px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--aqua) 18%,transparent),transparent 68%);pointer-events:none}
+.fasting-daily-head{align-items:flex-start;position:relative;z-index:1}
+.fasting-daily-head h2{margin:4px 0 6px;font-size:clamp(28px,4vw,46px)}
+.fasting-daily-head p{margin:0;max-width:760px;color:var(--muted);font-size:11px;font-weight:900;line-height:1.5;letter-spacing:.035em}
+.fasting-daily-badge{flex:0 0 auto;border:1px solid var(--line);border-radius:999px;padding:9px 12px;background:linear-gradient(135deg,color-mix(in srgb,var(--berry) 9%,white),color-mix(in srgb,var(--aqua) 10%,white));color:var(--berry);font-size:10px;font-weight:1000;letter-spacing:.08em}
+.fasting-daily-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0;position:relative;z-index:1}
+.fasting-daily-stats article{min-width:0;padding:15px 16px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.76);box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.fasting-daily-stats span{display:block;color:var(--muted);font-size:9px;font-weight:1000;letter-spacing:.09em;margin-bottom:6px}
+.fasting-daily-stats strong{display:block;font-size:clamp(20px,2.7vw,30px);line-height:1.05}
+.fasting-daily-list{display:grid;gap:14px;position:relative;z-index:1}
+.fasting-day-card{padding:18px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.92),color-mix(in srgb,var(--cream) 70%,white));box-shadow:0 14px 34px rgba(70,40,70,.07);transition:transform .24s ease,box-shadow .24s ease}
+.fasting-day-card:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(70,40,70,.11)}
+.fasting-day-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.fasting-day-top>div:first-child{min-width:0}
+.fasting-day-date{display:block;color:var(--berry);font-size:10px;font-weight:1000;letter-spacing:.09em;margin-bottom:6px}
+.fasting-day-top strong{display:block;font-size:clamp(28px,4vw,44px);line-height:1}
+.fasting-day-top small{display:block;margin-top:5px;color:var(--muted);font-size:10px;font-weight:950;letter-spacing:.05em}
+.fasting-day-ring{--fast-pct:0%;width:74px;height:74px;flex:0 0 74px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--berry) var(--fast-pct),color-mix(in srgb,var(--berry) 10%,white) 0);position:relative}
+.fasting-day-ring::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--panel)}
+.fasting-day-ring span{position:relative;z-index:1;font-size:13px;font-weight:1000;color:var(--berry)}
+.fasting-day-progress{height:10px;border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--berry) 9%,white);margin:14px 0 8px}
+.fasting-day-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--berry),var(--berry2));box-shadow:0 0 18px color-mix(in srgb,var(--berry) 28%,transparent);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.fasting-day-goal{font-size:9px;font-weight:1000;letter-spacing:.08em;color:var(--muted);margin-bottom:13px}
+.fasting-daily-equation{display:grid;grid-template-columns:minmax(90px,.8fr) 24px minmax(150px,1.15fr) minmax(120px,.9fr) auto;gap:8px;align-items:center;padding:10px 11px;border-top:1px solid var(--line);font-size:11px;font-weight:900}
+.fasting-daily-equation:first-of-type{border-top:0}
+.fasting-daily-equation b{color:var(--berry);text-align:center}
+.fasting-daily-equation strong{font-size:13px;color:var(--ink)}
+.fasting-inline-view{border:0;background:color-mix(in srgb,var(--berry) 10%,white);color:var(--berry);border-radius:999px;padding:8px 10px;font-size:9px;font-weight:1000;cursor:pointer;transition:.2s}
+.fasting-inline-view:hover{transform:translateY(-1px);background:color-mix(in srgb,var(--berry) 17%,white)}
+.fasting-daily-empty{min-height:120px;border:1px dashed var(--line);border-radius:20px;background:rgba(255,255,255,.55);padding:18px}
+@media(max-width:760px){
+ .fasting-daily-head{display:grid;gap:12px}
+ .fasting-daily-badge{justify-self:start}
+ .fasting-daily-stats{grid-template-columns:1fr 1fr}
+ .fasting-daily-stats article:first-child{grid-column:1/-1}
+ .fasting-daily-equation{grid-template-columns:1fr 18px 1.2fr;gap:6px}
+ .fasting-daily-equation strong{grid-column:1/3}
+ .fasting-inline-view{grid-column:3;grid-row:2;justify-self:end}
+}
+@media(max-width:460px){
+ .fasting-daily-card{padding:15px!important;border-radius:22px!important}
+ .fasting-daily-stats{grid-template-columns:1fr;gap:8px}
+ .fasting-daily-stats article:first-child{grid-column:auto}
+ .fasting-day-card{padding:14px;border-radius:20px}
+ .fasting-day-ring{width:62px;height:62px;flex-basis:62px}
+ .fasting-day-top strong{font-size:29px}
+ .fasting-daily-equation{grid-template-columns:1fr 16px 1fr;font-size:10px;padding-inline:4px}
+ .fasting-daily-equation strong{font-size:12px}
+}
