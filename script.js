@@ -380,6 +380,25 @@ function initFasting(){
   return (getState().logs||[]).filter(x=>x.date===date&&mealTypes.has(x.type)&&/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.test(String(x.time||''))).sort((a,b)=>parseWheelTime(b.time,date)-parseWheelTime(a.time,date))[0]||null
  }
  function currentActive(){return getState().activeFast||pending||null}
+ function fastDurationMinutes(startDate,startTime,breakDate,breakTime){
+  const start=parseWheelTime(startTime,startDate),end=parseWheelTime(breakTime,breakDate);
+  if(!Number.isFinite(start)||!Number.isFinite(end))return 0;
+  let mins=Math.round((end-start)/60000);
+  if(mins<0&&startDate===breakDate)mins+=1440;
+  return Math.max(0,mins)
+ }
+ function formatFastMinutes(mins){
+  const total=Math.max(0,Math.round(+mins||0)),h=Math.floor(total/60),m=total%60;
+  if(h&&m)return `${h} HR ${m} MIN`;
+  if(h)return `${h} HR${h===1?'':'S'}`;
+  return `${m} MIN`
+ }
+ function fastGoalHours(row){
+  const found=(D.FAST_PRESETS||[]).find(x=>x.id===row?.preset);
+  if(found?.hours)return +found.hours;
+  const n=parseFloat(String(row?.preset||'').split(':')[0]);
+  return Number.isFinite(n)&&n>0?n:16
+ }
  function setStartControlsLocked(locked){if(lastMealBtn)lastMealBtn.disabled=!!locked}
  function updateLastMealStatus(activeMeal=null){
   if(!lastMealStatus||!lastMealBtn)return;
@@ -412,18 +431,39 @@ function initFasting(){
  });
  qs('#saveFastBreakBtn').onclick=()=>{
   pending=currentActive()||JSON.parse(sessionStorage.getItem(`${PREFIX}:pendingFast`)||'null');if(!pending)return toast('START A FAST FIRST.');
-  const breakTime=timeOf('fastBreakTime'),breakDate=qs('#fastBreakDate').value,start=parseWheelTime(pending.startTime,pending.startDate),end=parseWheelTime(breakTime,breakDate);let hrs=(end-start)/36e5;if(hrs<0)hrs+=24;
-  const completed=logEntry({type:'fast',event:'break',name:`${pending.preset} FAST BROKEN`,preset:pending.preset,date:breakDate,startTime:pending.startTime,startDate:pending.startDate,breakTime,breakDate,durationHours:round(hrs,1),time:breakTime,startSource:pending.startSource||'manual',lastMealId:pending.lastMealId||'',lastMealName:pending.lastMealName||'',status:'completed',startLogId:pending.startLogId||''});
+  const breakTime=timeOf('fastBreakTime'),breakDate=qs('#fastBreakDate').value,durationMinutes=fastDurationMinutes(pending.startDate,pending.startTime,breakDate,breakTime),hrs=durationMinutes/60;
+  if(durationMinutes<=0)return toast('BREAK TIME MUST BE AFTER YOUR FAST START. ⏳');
+  const completed=logEntry({type:'fast',event:'break',name:`${pending.preset} FAST BROKEN`,preset:pending.preset,date:breakDate,startTime:pending.startTime,startDate:pending.startDate,breakTime,breakDate,durationMinutes,durationHours:round(hrs,1),time:breakTime,startSource:pending.startSource||'manual',lastMealId:pending.lastMealId||'',lastMealName:pending.lastMealName||'',status:'completed',startLogId:pending.startLogId||''});
   let startRow=null;
-  mutate(st=>{const row=(st.logs||[]).find(x=>x.id===pending.startLogId);if(row){row.status='completed';row.breakTime=breakTime;row.breakDate=breakDate;row.durationHours=round(hrs,1);row.completedLogId=completed.id;startRow={...row}}st.activeFast=null});
+  mutate(st=>{const row=(st.logs||[]).find(x=>x.id===pending.startLogId);if(row){row.status='completed';row.breakTime=breakTime;row.breakDate=breakDate;row.durationMinutes=durationMinutes;row.durationHours=round(hrs,1);row.completedLogId=completed.id;startRow={...row}}st.activeFast=null});
   if(startRow)syncLogUpdate(startRow).catch(()=>{});
   sessionStorage.removeItem(`${PREFIX}:pendingFast`);pending=null;
   toast(`FAST BROKEN + LOGGED · ${round(hrs,1)} HOURS ✨`);render();updateLastMealStatus()
  };
- function openFastDetail(id){const x=(getState().logs||[]).find(r=>r.id===id);if(!x)return;let start=x,brk=x;if(x.type==='fast-start'&&x.completedLogId)brk=(getState().logs||[]).find(r=>r.id===x.completedLogId)||x;if(x.type==='fast'&&x.startLogId)start=(getState().logs||[]).find(r=>r.id===x.startLogId)||x;const dlg=qs('#fastDetailDialog'),c=qs('#fastDetailContent');if(!dlg||!c)return;const completed=(brk.type==='fast'&&brk.breakTime)||start.status==='completed';c.innerHTML=`<div class="section-kicker">INDIVIDUAL FAST LOG</div><h2 style="font-size:clamp(34px,5vw,58px);margin:8px 0 18px">${esc(start.preset||brk.preset||'FAST')} FAST ${completed?'COMPLETE':'ACTIVE'} ⏳</h2><div class="fast-detail-grid"><div><span>STATUS</span><strong>${completed?'COMPLETED ✅':'ACTIVE 🟣'}</strong></div><div><span>START</span><strong>${esc(start.startDate||start.date||brk.startDate||'')} · ${esc(start.startTime||start.time||brk.startTime||'')}</strong></div><div><span>BREAK</span><strong>${completed?`${esc(brk.breakDate||'')} · ${esc(brk.breakTime||'')}`:'NOT BROKEN YET'}</strong></div><div><span>DURATION</span><strong>${completed?`${esc(brk.durationHours||start.durationHours||'—')} HOURS`:'IN PROGRESS'}</strong></div><div><span>START METHOD</span><strong>${(start.startSource||brk.startSource)==='last-meal'?'AFTER LAST MEAL':'MANUAL'}</strong></div><div><span>LAST MEAL</span><strong>${esc(start.lastMealName||brk.lastMealName||'—')}</strong></div></div><div class="fast-detail-story"><strong>FAST STORY</strong><p>STARTED ${esc(start.startDate||start.date||brk.startDate||'')} AT ${esc(start.startTime||start.time||brk.startTime||'')}${start.lastMealName||brk.lastMealName?` AFTER ${esc(start.lastMealName||brk.lastMealName)}`:''}.${completed?` BROKEN ${esc(brk.breakDate||'')} AT ${esc(brk.breakTime||'')} AFTER ${esc(brk.durationHours||start.durationHours||'—')} HOURS.`:' THIS FAST IS STILL ACTIVE.'}</p></div>`;dlg.showModal()}
+ function openFastDetail(id){const x=(getState().logs||[]).find(r=>r.id===id);if(!x)return;let start=x,brk=x;if(x.type==='fast-start'&&x.completedLogId)brk=(getState().logs||[]).find(r=>r.id===x.completedLogId)||x;if(x.type==='fast'&&x.startLogId)start=(getState().logs||[]).find(r=>r.id===x.startLogId)||x;const dlg=qs('#fastDetailDialog'),c=qs('#fastDetailContent');if(!dlg||!c)return;const completed=(brk.type==='fast'&&brk.breakTime)||start.status==='completed';c.innerHTML=`<div class="section-kicker">INDIVIDUAL FAST LOG</div><h2 style="font-size:clamp(34px,5vw,58px);margin:8px 0 18px">${esc(start.preset||brk.preset||'FAST')} FAST ${completed?'COMPLETE':'ACTIVE'} ⏳</h2><div class="fast-detail-grid"><div><span>STATUS</span><strong>${completed?'COMPLETED ✅':'ACTIVE 🟣'}</strong></div><div><span>START</span><strong>${esc(start.startDate||start.date||brk.startDate||'')} · ${esc(start.startTime||start.time||brk.startTime||'')}</strong></div><div><span>BREAK</span><strong>${completed?`${esc(brk.breakDate||'')} · ${esc(brk.breakTime||'')}`:'NOT BROKEN YET'}</strong></div><div><span>DURATION</span><strong>${completed?formatFastMinutes(+brk.durationMinutes||+start.durationMinutes||Math.round((+brk.durationHours||+start.durationHours||0)*60)):'IN PROGRESS'}</strong></div><div><span>START METHOD</span><strong>${(start.startSource||brk.startSource)==='last-meal'?'AFTER LAST MEAL':'MANUAL'}</strong></div><div><span>LAST MEAL</span><strong>${esc(start.lastMealName||brk.lastMealName||'—')}</strong></div></div><div class="fast-detail-story"><strong>FAST STORY</strong><p>STARTED ${esc(start.startDate||start.date||brk.startDate||'')} AT ${esc(start.startTime||start.time||brk.startTime||'')}${start.lastMealName||brk.lastMealName?` AFTER ${esc(start.lastMealName||brk.lastMealName)}`:''}.${completed?` BROKEN ${esc(brk.breakDate||'')} AT ${esc(brk.breakTime||'')} AFTER ${esc(formatFastMinutes(+brk.durationMinutes||+start.durationMinutes||Math.round((+brk.durationHours||+start.durationHours||0)*60)))}.`:' THIS FAST IS STILL ACTIVE.'}</p></div>`;dlg.showModal()}
+ function renderDailyCalculations(){
+  const target=qs('#fastDailyCalculations'),stats=qs('#fastDailyStats');if(!target||!stats)return;
+  const completed=(getState().logs||[]).filter(x=>x.type==='fast'&&x.breakTime&&x.startTime).map(x=>{
+   const mins=+x.durationMinutes||fastDurationMinutes(x.startDate,x.startTime,x.breakDate,x.breakTime);
+   return {...x,_mins:mins,_hours:mins/60}
+  }).filter(x=>x._mins>0).sort((a,b)=>parseWheelTime(b.startTime,b.startDate)-parseWheelTime(a.startTime,a.startDate));
+  const groups=new Map();
+  completed.forEach(x=>{const day=x.startDate||x.date||x.breakDate||todayISO();if(!groups.has(day))groups.set(day,[]);groups.get(day).push(x)});
+  const days=[...groups.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
+  const totalMinutes=completed.reduce((n,x)=>n+x._mins,0),avgMinutes=completed.length?Math.round(totalMinutes/completed.length):0,longest=completed.reduce((best,x)=>x._mins>(best?best._mins:0)?x:best,null);
+  stats.innerHTML=completed.length?`<article><span>COMPLETED FASTS</span><strong>${completed.length}</strong></article><article><span>AVERAGE FAST</span><strong>${formatFastMinutes(avgMinutes)}</strong></article><article><span>LONGEST FAST</span><strong>${longest?formatFastMinutes(longest._mins):'—'}</strong></article>`:`<article><span>COMPLETED FASTS</span><strong>0</strong></article><article><span>AVERAGE FAST</span><strong>—</strong></article><article><span>LONGEST FAST</span><strong>—</strong></article>`;
+  if(!days.length){target.innerHTML='<div class="empty-state fasting-daily-empty">BREAK YOUR FIRST FAST AND THE EXACT DAILY CALCULATION WILL APPEAR HERE. ⏳</div>';return}
+  target.innerHTML=days.map(([day,rows])=>{
+   const total=rows.reduce((n,x)=>n+x._mins,0),main=rows[0],goal=Math.max(1,fastGoalHours(main)*60),pct=Math.min(100,Math.round(total/goal*100)),dateLabel=new Date(`${day}T12:00:00`).toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+   const detail=rows.map(x=>`<div class="fasting-daily-equation"><span>${esc(x.startTime)}</span><b>→</b><span>${esc(x.breakDate!==x.startDate?`${x.breakDate} · `:'')}${esc(x.breakTime)}</span><strong>= ${formatFastMinutes(x._mins)}</strong><button type="button" class="fasting-inline-view" data-view-fast="${esc(x.id)}">VIEW</button></div>`).join('');
+   return `<article class="fasting-day-card"><div class="fasting-day-top"><div><span class="fasting-day-date">${esc(dateLabel)}</span><strong>${formatFastMinutes(total)}</strong><small>${round(total/60,1)} HOURS TOTAL</small></div><div class="fasting-day-ring" style="--fast-pct:${pct}%"><span>${pct}%</span></div></div><div class="fasting-day-progress"><i style="width:${pct}%"></i></div><div class="fasting-day-goal">${esc(main.preset||'FAST')} GOAL · ${fastGoalHours(main)} HRS${rows.length>1?` · ${rows.length} FASTS THIS DAY`:''}</div>${detail}</article>`
+  }).join('');
+ }
  function render(){
   const a=(getState().logs||[]).filter(x=>x.type==='fast'||x.type==='fast-start').slice(0,12);
-  qs('#fastHistory').innerHTML=a.length?a.map(x=>x.type==='fast-start'?`<article class="log-card fasting-event-card fast-start-event"><span class="pill">START LOG</span><strong>${esc(x.preset)} FAST STARTED</strong><span>${esc(x.startDate||x.date)} · ${esc(x.startTime||x.time)}</span><span class="log-extra">${x.status==='completed'?'✅ COMPLETED':'🟣 ACTIVE'}${x.startSource==='last-meal'?` · 🍽️ AFTER ${esc(x.lastMealName||'LAST MEAL')}`:''}</span><button type="button" class="btn tiny ghost fast-view-btn" data-view-fast="${esc(x.id)}">VIEW FULL LOG</button></article>`:`<article class="log-card fasting-event-card fast-break-event"><span class="pill">BREAK LOG</span><strong>${esc(x.preset)} FAST BROKEN · ${esc(x.durationHours)} HRS</strong><span>${esc(x.startDate)} ${esc(x.startTime)} → ${esc(x.breakDate)} ${esc(x.breakTime)}</span>${x.startSource==='last-meal'?`<span class="log-extra">🍽️ STARTED AFTER LAST MEAL · ${esc(x.lastMealName||'LAST MEAL')}</span>`:''}<button type="button" class="btn tiny ghost fast-view-btn" data-view-fast="${esc(x.id)}">VIEW FULL LOG</button></article>`).join(''):'<div class="empty-state">NO FAST STARTS OR BREAKS LOGGED YET.</div>';qsa('[data-view-fast]',qs('#fastHistory')).forEach(b=>b.onclick=()=>openFastDetail(b.dataset.viewFast))
+  qs('#fastHistory').innerHTML=a.length?a.map(x=>x.type==='fast-start'?`<article class="log-card fasting-event-card fast-start-event"><span class="pill">START LOG</span><strong>${esc(x.preset)} FAST STARTED</strong><span>${esc(x.startDate||x.date)} · ${esc(x.startTime||x.time)}</span><span class="log-extra">${x.status==='completed'?'✅ COMPLETED':'🟣 ACTIVE'}${x.startSource==='last-meal'?` · 🍽️ AFTER ${esc(x.lastMealName||'LAST MEAL')}`:''}</span><button type="button" class="btn tiny ghost fast-view-btn" data-view-fast="${esc(x.id)}">VIEW FULL LOG</button></article>`:`<article class="log-card fasting-event-card fast-break-event"><span class="pill">BREAK LOG</span><strong>${esc(x.preset)} FAST BROKEN · ${formatFastMinutes(+x.durationMinutes||Math.round((+x.durationHours||0)*60))}</strong><span>${esc(x.startDate)} ${esc(x.startTime)} → ${esc(x.breakDate)} ${esc(x.breakTime)}</span>${x.startSource==='last-meal'?`<span class="log-extra">🍽️ STARTED AFTER LAST MEAL · ${esc(x.lastMealName||'LAST MEAL')}</span>`:''}<button type="button" class="btn tiny ghost fast-view-btn" data-view-fast="${esc(x.id)}">VIEW FULL LOG</button></article>`).join(''):'<div class="empty-state">NO FAST STARTS OR BREAKS LOGGED YET.</div>';
+  renderDailyCalculations();
+  qsa('[data-view-fast]').forEach(b=>b.onclick=()=>openFastDetail(b.dataset.viewFast))
  }
  render();setTimeout(()=>{const active=currentActive();if(active){pending=active;qs('#fastStartDate').value=active.startDate||todayISO()}updateLastMealStatus()},0)
 }
