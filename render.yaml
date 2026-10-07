@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: berry-vibes-ccd
+    runtime: node
+    plan: free
+    buildCommand: ""
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_ORIGIN
+        value: "https://YOUR-GITHUB-USERNAME.github.io"

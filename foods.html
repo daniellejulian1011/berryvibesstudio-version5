@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-theme="berry-cream">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Berry Vibes Studio Cozy Core Diet interactive website">
+<title>Food Log · Berry Vibes CCD</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="" data-page="foods">
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div><div class="ambient ambient-c"></div>
+<nav class="top-nav"><a class="brand" href="index.html"><span class="brand-orb">BV</span><span>BERRY VIBES × CCD</span></a><div class="nav-scroll"><a class="nav-link" href="index.html">TODAY</a><a class="nav-link" href="foods.html">FOOD</a><a class="nav-link" href="recipes.html">RECIPES</a><a class="nav-link" href="exercise.html">MOVE</a><a class="nav-link" href="fasting.html">FASTING</a><a class="nav-link" href="restaurants.html">RESTAURANTS</a><a class="nav-link" href="grocery.html">GROCERY</a><a class="nav-link" href="battle.html">BATTLE</a><a class="nav-link" href="facts.html">FACTS</a><a class="nav-link" href="calendar.html">CALENDAR</a><a class="nav-link" href="period.html">PERIOD</a></div><a class="nav-auth" data-auth-link href="login.html">SIGN IN</a></nav>
+<main class="page-shell">
+<section class="page-head"><p class="eyebrow">FOOD LOG</p><h1>SCROLL THE TIME. PICK THE FOOD. LOG IT. 🍽️</h1><p>KNOWN CCD FOODS USE BUILT-IN NUTRITION — NO MANUAL MACRO TYPING.</p></section>
+<section class="two-col wide-left food-log-layout">
+ <article class="glass-card food-picker-card"><div class="section-kicker">1 · PICK A FOOD</div><div class="search-row"><input id="foodSearch" class="input" placeholder="SEARCH CCD + MY CUSTOM FOODS"><select id="mealSlot" class="input" aria-label="Choose meal type"><option value="ALL">ALL FOODS</option><option value="BREAKFAST">BREAKFAST</option><option value="LUNCH">LUNCH</option><option value="SNACK">SNACK</option><option value="SOTD">SOTD</option><option value="DINNER">DINNER</option></select></div><div id="mealFilterStatus" class="meal-filter-status" aria-live="polite"></div><div id="foodResults" class="food-deck"></div></article>
+ <aside class="glass-card sticky-card food-detail-card"><div class="section-kicker">2 · LOG DETAILS</div><div id="selectedFood" class="selected-food empty-state">CHOOSE A FOOD CARD.</div><label class="field-label">SERVINGS <span id="foodServingLabel">1.0×</span></label><input id="foodServing" type="range" min="0.25" max="4" step="0.25" value="1"><div id="foodNutritionPreview" class="mini-macros"></div><div class="section-kicker gap-top">3 · DRINK WITH THIS FOOD · OPTIONAL</div>
+<div class="drink-console">
+  <select id="drinkPreset" class="input" aria-label="Drink with this food">
+    <option value="none">NO DRINK</option>
+    <option value="water">WATER</option>
+    <option value="cinnamon-coffee">HOT CINNAMON COFFEE</option>
+    <option value="orange-juice">ORANGE JUICE</option>
+    <option value="skim-milk">SKIM MILK</option>
+    <option value="custom">OTHER / CUSTOM DRINK</option>
+  </select>
+  <div id="drinkPresetFields" class="drink-preset-fields" hidden>
+    <label class="field-label">DRINK SERVING <span id="drinkServingLabel">1.0×</span></label>
+    <input id="drinkServing" type="range" min="0.5" max="3" step="0.5" value="1">
+    <div id="drinkNutritionPreview" class="mini-macros drink-macros"></div>
+  </div>
+  <div id="drinkCustomFields" class="drink-custom-fields" hidden>
+    <input id="drinkCustomName" class="input" placeholder="DRINK NAME · E.G. HOMEMADE ICED TEA">
+    <input id="drinkCustomAmount" class="input" placeholder="AMOUNT · E.G. 1 BOTTLE, 1/2 CUP, 12 OZ">
+  </div>
+  <div id="drinkSummary" class="drink-summary">NO DRINK ADDED.</div>
+</div>
+<div class="section-kicker gap-top">4 · WHEN?</div><div class="time-wheel" data-time-wheel id="foodTime"></div><div class="section-kicker gap-top">5 · OPTIONAL FOOD / RECIPE-CARD PHOTOS</div><div class="photo-upload-grid">
+  <div class="real-upload-card"><span>📸 FOOD PHOTO</span><input id="foodPhoto" class="real-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*"><div class="upload-inline-actions"><small id="foodPhotoName">NO PHOTO SELECTED</small><button id="removeFoodPhoto" type="button" class="btn tiny ghost" hidden>REMOVE</button></div></div>
+  <div class="real-upload-card"><span>🗂️ RECIPE CARD IMAGE</span><input id="recipeCardPhoto" class="real-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*"><div class="upload-inline-actions"><small id="recipeCardPhotoName">NO CARD SELECTED</small><button id="removeRecipeCardPhoto" type="button" class="btn tiny ghost" hidden>REMOVE</button></div></div>
+</div><div id="uploadPreview" class="upload-preview upload-preview-large"></div><button id="logFoodBtn" class="btn primary full">LOG FOOD + DRINK ✨</button></aside>
+</section>
+<section class="glass-card recipe-remix-wide">
+  <div class="section-row remix-head">
+    <div><div class="section-kicker">RECIPE MODIFICATION · OPTIONAL</div><h2>MAKE A VERSION THAT ACTUALLY FITS WHAT YOU MADE ✨</h2></div>
+    <span class="gallery-note">ORIGINAL → MODIFIED · AUTO CALORIE COMPARISON</span>
+  </div>
+  <div class="recipe-remix-layout">
+    <div class="recipe-remix-notes">
+      <label class="recipe-change-label" for="recipeChangeNote">THE ONLY THING I CHANGED FROM THE RECIPE I CREATED WAS....</label>
+      <textarea id="recipeChangeNote" class="input textarea" maxlength="800" placeholder="EXAMPLE: I USED A WHOLE EGG, ADDED CINNAMON, AND USED 2 TBSP SOUR CREAM INSTEAD."></textarea>
+      <input id="modifiedRecipeName" class="input" placeholder="OPTIONAL NAME FOR THIS VERSION · E.G. CINNAMON SOUR-CREAM PANCAKES">
+      <div class="recipe-calorie-compare">
+        <div><span>ORIGINAL RECIPE</span><strong id="recipeBaseCalories">— KCAL</strong></div>
+        <div class="calorie-arrow">→</div>
+        <div><span>YOUR MODIFIED VERSION</span><strong id="modifiedCalories">— KCAL</strong><small id="calorieDelta">0 KCAL CHANGE</small></div>
+      </div>
+    </div>
+    <div class="recipe-remix-calc">
+      <div class="section-kicker">CALCULATE WHAT CHANGED</div>
+      <p class="tiny-note">LIVE CALCULATION IS ALWAYS ON: TYPE A MEASURABLE CHANGE ABOVE OR ADD / REMOVE INGREDIENT AMOUNTS BELOW. CALORIES + MACROS RECALCULATE AGAINST THE ORIGINAL RECIPE.</p>
+      <div class="mod-calc-row">
+        <select id="modIngredientSelect" class="input"></select>
+        <select id="modIngredientAction" class="input"><option value="add">ADD</option><option value="remove">REMOVE</option></select>
+        <input id="modIngredientQty" class="input" type="number" min="0.01" step="0.25" value="1" aria-label="Ingredient quantity">
+        <button id="addModIngredientBtn" class="btn secondary" type="button">APPLY + RECALCULATE</button>
+      </div>
+      <div id="modAdjustments" class="mod-adjustment-list"></div>
+      <div class="recipe-change-actions">
+        <button id="saveModifiedRecipeBtn" class="btn secondary">SAVE MODIFIED VERSION</button>
+        <button id="clearRecipeChangeBtn" class="btn ghost">CLEAR</button>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="glass-card custom-food-studio"><div class="section-row"><div><div class="section-kicker">ADD MY OWN FOOD</div><h2>NEW RECIPE OR NEW SNACK ✨</h2></div><span class="gallery-note">SAVE · EDIT · LOG AGAIN</span></div>
+<p class="large-copy compact-copy">MADE SOMETHING NEW OR ATE A SNACK THAT ISN’T IN THE CCD VAULT? ADD IT HERE ONCE AND IT BECOMES A REUSABLE FOOD CARD.</p>
+<div class="form-grid custom-food-grid"><select id="customFoodType" class="input"><option value="recipe">CUSTOM RECIPE I MADE</option><option value="snack">NEW SNACK I ATE</option></select><select id="customFoodMeal" class="input"><option>BREAKFAST</option><option>LUNCH</option><option>SNACK</option><option>SOTD</option><option>DINNER</option></select><input id="customFoodName" class="input" placeholder="NAME · E.G. MY CINNAMON WAFFLE"><input id="customFoodServing" class="input" placeholder="SERVING / YIELD · E.G. 1 PLATE OR 3 PANCAKES"></div>
+<textarea id="customFoodIngredients" class="input textarea" placeholder="INGREDIENTS OR WHAT WAS IN IT · ONE PER LINE (OPTIONAL FOR A SIMPLE SNACK)"></textarea>
+<textarea id="customFoodNotes" class="input textarea compact-textarea" placeholder="WHAT IT TASTES LIKE / WHAT TO EXPECT · NOTES · BRAND · VARIATION"></textarea>
+<div class="nutrition-entry-grid"><label>CALORIES<input id="customFoodCalories" class="input" type="number" min="0" step="1" placeholder="0"></label><label>CARBS<input id="customFoodCarbs" class="input" type="number" min="0" step="0.1" placeholder="G"></label><label>PROTEIN<input id="customFoodProtein" class="input" type="number" min="0" step="0.1" placeholder="G"></label><label>FAT<input id="customFoodFat" class="input" type="number" min="0" step="0.1" placeholder="G"></label><label>FIBER<input id="customFoodFiber" class="input" type="number" min="0" step="0.1" placeholder="G"></label></div>
+<div class="real-upload-card"><span>📸 OPTIONAL PHOTO</span><input id="customFoodPhoto" class="real-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*"><small>CHOOSE A PHOTO FROM YOUR DEVICE</small></div><div id="customFoodPhotoPreview" class="upload-preview upload-preview-large"></div><button id="saveCustomFoodBtn" class="btn primary full">SAVE TO MY FOOD VAULT ✨</button>
+<div class="section-kicker gap-top">MY CUSTOM FOOD VAULT</div><div id="customFoodVault" class="modified-recipe-grid"></div></section>
+<section class="glass-card"><div class="section-row"><div><div class="section-kicker">MY MODIFIED RECIPES</div><h2>VERSIONS I ACTUALLY MADE</h2></div><span class="gallery-note">EDIT · LOAD · DELETE</span></div><div id="modifiedRecipeVault" class="modified-recipe-grid"></div></section>
+<section class="glass-card"><div class="section-kicker">RECENT FOOD LOGS</div><h2>YOUR LATEST BITES</h2><div id="recentFoods" class="mini-log-grid"></div></section>
+<footer class="ccd-footer"><strong>LET’S MAKE...</strong><span>THE FOOD LOG FEEL LIKE A LITTLE GAME 🎮🍴</span></footer>
+</main>
+<div id="toast" class="toast" aria-live="polite"></div>
+<script src="config.js"></script><script src="data.js"></script><script src="script.js"></script>
+</body></html>

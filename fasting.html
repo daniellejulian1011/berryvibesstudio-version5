@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-theme="berry-cream">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Berry Vibes Studio Cozy Core Diet interactive website">
+<title>Fasting · Berry Vibes CCD</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="" data-page="fasting">
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div><div class="ambient ambient-c"></div>
+<nav class="top-nav"><a class="brand" href="index.html"><span class="brand-orb">BV</span><span>BERRY VIBES × CCD</span></a><div class="nav-scroll"><a class="nav-link" href="index.html">TODAY</a><a class="nav-link" href="foods.html">FOOD</a><a class="nav-link" href="recipes.html">RECIPES</a><a class="nav-link" href="exercise.html">MOVE</a><a class="nav-link" href="fasting.html">FASTING</a><a class="nav-link" href="restaurants.html">RESTAURANTS</a><a class="nav-link" href="grocery.html">GROCERY</a><a class="nav-link" href="battle.html">BATTLE</a><a class="nav-link" href="facts.html">FACTS</a><a class="nav-link" href="calendar.html">CALENDAR</a><a class="nav-link" href="period.html">PERIOD</a></div><a class="nav-auth" data-auth-link href="login.html">SIGN IN</a></nav>
+<main class="page-shell">
+<section class="page-head"><p class="eyebrow">FASTING</p><h1>FASTING WINDOW LOG — NO COUNTDOWN TIMER ⏳</h1><p>CHOOSE A FAST TYPE. SMART START USES YOUR LAST MEAL TIME; WHEN YOU BREAK THE FAST, PICK THE BREAK TIME BELOW.</p></section>
+<section class="glass-card"><div id="fastPresetDeck" class="fast-preset-deck"></div></section>
+<section class="glass-card fasting-quick-card">
+  <div class="fasting-quick-copy">
+    <span class="last-meal-fast-icon">🍽️</span>
+    <div><div class="section-kicker">SMART START</div><h2>START MY FAST AFTER MY LAST MEAL</h2><p>THE WEBSITE FINDS YOUR LATEST TIMED FOOD, SNACK/SOTD, OR RESTAURANT LOG FOR THAT DAY, STARTS THE FAST AT THAT TIME, AND LOGS THE START IMMEDIATELY.</p></div>
+  </div>
+  <div class="fasting-quick-grid">
+    <div class="last-meal-date-row"><label for="fastStartDate">DAY</label><input id="fastStartDate" class="input compact-date" type="date"></div>
+    <div id="lastMealFastStatus" class="last-meal-fast-status">SELECT A DATE, THEN I’LL FIND YOUR LAST MEAL.</div>
+    <button id="startFastAfterLastMealBtn" class="btn last-meal-btn" type="button"><span>🍽️</span><span>START FAST AFTER MY LAST MEAL</span><span>✨</span></button>
+  </div>
+</section>
+<section class="fasting-break-workspace">
+  <article class="glass-card fasting-panel fasting-break-panel fasting-break-only">
+    <div class="fasting-panel-head"><div><div class="section-kicker">BREAK FAST</div><h2>WHEN DID YOU BREAK IT?</h2></div><span class="fasting-step">02</span></div>
+    <div class="fast-break-date-card"><label for="fastBreakDate">BREAK DATE</label><input id="fastBreakDate" class="input compact-date" type="date"></div>
+    <div class="time-wheel fasting-time-wheel" data-time-wheel id="fastBreakTime"></div>
+    <button id="saveFastBreakBtn" class="btn primary full fasting-save-btn">BREAK + LOG FAST</button>
+    <div class="fasting-helper-note"><span>✨</span><p>YOUR FAST LENGTH IS CALCULATED AUTOMATICALLY FROM THE SAVED START → BREAK TIME.</p></div>
+  </article>
+</section>
+<section class="glass-card"><div class="section-kicker">FAST START + BREAK HISTORY</div><div id="fastHistory" class="mini-log-grid"></div></section>
+<dialog id="fastDetailDialog" class="recipe-dialog fast-detail-dialog">
+  <button class="dialog-close" type="button" data-close-dialog="fastDetailDialog">×</button>
+  <div id="fastDetailContent" class="dialog-content"></div>
+</dialog>
+<footer class="ccd-footer"><strong>LET’S MAKE...</strong><span>TIME INPUT SMOOTH, NOT BORING ✨</span></footer>
+</main>
+<div id="toast" class="toast" aria-live="polite"></div>
+<script src="config.js"></script><script src="data.js"></script><script src="script.js"></script>
+</body></html>

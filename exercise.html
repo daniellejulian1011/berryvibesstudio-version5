@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="berry-cream">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Berry Vibes Studio Cozy Core Diet interactive website">
+<title>Movement · Berry Vibes CCD</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="" data-page="exercise">
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div><div class="ambient ambient-c"></div>
+<nav class="top-nav"><a class="brand" href="index.html"><span class="brand-orb">BV</span><span>BERRY VIBES × CCD</span></a><div class="nav-scroll"><a class="nav-link" href="index.html">TODAY</a><a class="nav-link" href="foods.html">FOOD</a><a class="nav-link" href="recipes.html">RECIPES</a><a class="nav-link" href="exercise.html">MOVE</a><a class="nav-link" href="fasting.html">FASTING</a><a class="nav-link" href="restaurants.html">RESTAURANTS</a><a class="nav-link" href="grocery.html">GROCERY</a><a class="nav-link" href="battle.html">BATTLE</a><a class="nav-link" href="facts.html">FACTS</a><a class="nav-link" href="calendar.html">CALENDAR</a><a class="nav-link" href="period.html">PERIOD</a></div><a class="nav-auth" data-auth-link href="login.html">SIGN IN</a></nav>
+<main class="page-shell">
+<section class="page-head"><p class="eyebrow">MOVEMENT</p><h1>PICK THE MOVE — CHOOSE START + FINISH TIME — DURATION AUTO-CALCULATES 💃🏽</h1><p>LOG THE REAL TIME WINDOW YOU EXERCISED. NO MANUAL DURATION OR CALORIE-BURN INPUT.</p></section>
+<section class="two-col wide-left"><article class="glass-card"><div id="movementDeck" class="movement-deck"></div></article><aside class="glass-card sticky-card"><div class="section-kicker">MOVEMENT CONSOLE</div><div id="movementSelected" class="selected-food empty-state">PICK A MOVEMENT.</div>
+<div class="movement-time-block gap-top">
+  <div class="section-kicker">STARTED · WHAT TIME?</div>
+  <div class="time-wheel compact-wheel" data-time-wheel id="movementStartTime" aria-label="Exercise start time"></div>
+</div>
+<div class="movement-time-block">
+  <div class="section-kicker">FINISHED · WHAT TIME?</div>
+  <div class="time-wheel compact-wheel" data-time-wheel data-offset-minutes="30" id="movementEndTime" aria-label="Exercise finish time"></div>
+</div>
+<div class="duration-console movement-duration-auto">
+  <div class="duration-display"><strong id="movementDurationBig">30</strong><span>MINUTES TOTAL</span></div>
+  <div class="time-range-readout"><span id="movementStartLabel">—</span><b>→</b><span id="movementEndLabel">—</span></div>
+  <p class="duration-help">DURATION IS CALCULATED AUTOMATICALLY FROM YOUR START AND FINISH TIMES.</p>
+</div>
+<div class="burn-meter"><strong id="movementBurn">0</strong><span>EST. KCAL · AUTO FROM DURATION</span></div>
+<button id="logMovementBtn" class="btn primary full">LOG MOVEMENT ✨</button></aside></section>
+<section class="glass-card"><div class="section-kicker">TODAY'S MOVEMENT</div><h2>SEPARATE FROM MAINTENANCE GAP</h2><div id="movementHistory" class="mini-log-grid"></div></section>
+<footer class="ccd-footer"><strong>LET’S MAKE...</strong><span>MOVEMENT FEEL PLAYABLE 🎵🩰</span></footer>
+</main>
+<div id="toast" class="toast" aria-live="polite"></div>
+<script src="config.js"></script><script src="data.js"></script><script src="script.js"></script>
+</body></html>
