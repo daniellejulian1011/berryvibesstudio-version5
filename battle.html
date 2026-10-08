@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en" data-theme="berry-cream">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Berry Vibes CCD interactive food battle">
+<title>Food Battle · Berry Vibes CCD</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="battle">
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div><div class="ambient ambient-c"></div>
+<nav class="top-nav"><a class="brand" href="index.html"><span class="brand-orb">BV</span><span>BERRY VIBES × CCD</span></a><div class="nav-scroll"><a class="nav-link" href="index.html">TODAY</a><a class="nav-link" href="foods.html">FOOD</a><a class="nav-link" href="recipes.html">RECIPES</a><a class="nav-link" href="exercise.html">MOVE</a><a class="nav-link" href="fasting.html">FASTING</a><a class="nav-link" href="restaurants.html">RESTAURANTS</a><a class="nav-link" href="grocery.html">GROCERY</a><a class="nav-link active" href="battle.html">BATTLE</a><a class="nav-link" href="facts.html">FACTS</a><a class="nav-link" href="calendar.html">CALENDAR</a><a class="nav-link" href="period.html">PERIOD</a></div><a class="nav-auth" data-auth-link href="login.html">SIGN IN</a></nav>
+<main class="page-shell battle-page-v6">
+<section class="battle-hero-v6"><div><p class="eyebrow">FOOD COMPARISON BATTLE</p><h1>FOOD FIGHT, BUT MAKE IT CCD. ⚡👑</h1><p>PICK TWO FOODS, CHOOSE THE STAT, THEN HIT BATTLE. RANDOMIZE IT, SWAP FIGHTERS, OR RUN A FULL STAT SHOWDOWN.</p></div><div class="battle-orbit" aria-hidden="true"><span>⚡</span><span>👑</span><span>🍴</span></div></section>
+<section class="battle-console glass-card battle-console-v6">
+  <div class="battle-top-controls"><button id="battleRandomBtn" class="btn ghost" type="button">🎲 RANDOMIZE</button><button id="battleSwapBtn" class="btn ghost" type="button">⇄ SWAP</button><button id="battleGauntletBtn" class="btn secondary" type="button">🔥 FULL STAT SHOWDOWN</button></div>
+  <div class="battle-selectors"><select id="battleLeft" class="input"></select><div class="versus-orb">VS</div><select id="battleRight" class="input"></select></div>
+  <div class="segmented battle-metrics"><button data-battle-metric="calories" class="active">CALORIES</button><button data-battle-metric="protein">PROTEIN</button><button data-battle-metric="fiber">FIBER</button><button data-battle-metric="carbs">CARBS</button><button data-battle-metric="fat">FAT</button></div>
+  <button id="battleStartBtn" class="battle-start-button" type="button"><span>⚔️</span> BATTLE! <span>⚔️</span></button>
+  <div id="battleArena" class="battle-arena"></div>
+  <div id="battleScoreboard" class="battle-scoreboard"></div>
+  <div id="battleWinner" class="winner-stage"></div>
+  <div id="battleConfetti" class="battle-confetti" aria-hidden="true"></div>
+</section>
+<footer class="ccd-footer"><strong>LET’S MAKE...</strong><span>THIS BATTLE WAY TOO DRAMATIC 😂⚡👑</span></footer>
+</main>
+<div id="toast" class="toast" aria-live="polite"></div>
+<script src="config.js"></script><script src="data.js"></script><script src="script.js"></script>
+</body></html>

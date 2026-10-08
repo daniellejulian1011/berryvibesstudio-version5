@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" data-theme="berry-cream">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Berry Vibes Studio Cozy Core Diet interactive website">
+<title>Restaurants · Berry Vibes CCD</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="" data-page="restaurants">
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div><div class="ambient ambient-c"></div>
+<nav class="top-nav"><a class="brand" href="index.html"><span class="brand-orb">BV</span><span>BERRY VIBES × CCD</span></a><div class="nav-scroll"><a class="nav-link" href="index.html">TODAY</a><a class="nav-link" href="foods.html">FOOD</a><a class="nav-link" href="recipes.html">RECIPES</a><a class="nav-link" href="exercise.html">MOVE</a><a class="nav-link" href="fasting.html">FASTING</a><a class="nav-link" href="restaurants.html">RESTAURANTS</a><a class="nav-link" href="grocery.html">GROCERY</a><a class="nav-link" href="battle.html">BATTLE</a><a class="nav-link" href="facts.html">FACTS</a><a class="nav-link" href="calendar.html">CALENDAR</a><a class="nav-link" href="period.html">PERIOD</a></div><a class="nav-auth" data-auth-link href="login.html">SIGN IN</a></nav>
+<main class="page-shell">
+<section class="page-head"><p class="eyebrow">RESTAURANT VAULT</p><h1>FAST FOOD + RESTAURANT QUEST 🍟☕🥞</h1><p>SAVED RESTAURANT ITEMS USE PRESETS. BRAND-NEW RESTAURANT FOODS CAN BE ADDED MANUALLY WITH THEIR NUTRITION.</p></section>
+<section id="restaurantChains" class="restaurant-grid"></section>
+<section class="two-col wide-left"><article class="glass-card"><div class="section-kicker">SAVED ITEM LOGGER</div><div class="form-grid"><select id="restaurantSelect" class="input"></select><select id="restaurantItemSelect" class="input"></select></div><div id="restaurantPresetPreview" class="selected-food"></div><label class="field-label">QUANTITY <span id="restaurantQtyLabel">1×</span></label><input id="restaurantQty" type="range" min="0.25" max="4" step="0.25" value="1"><div class="time-wheel" data-time-wheel id="restaurantTime"></div><button id="logRestaurantPresetBtn" class="btn primary full">LOG RESTAURANT ITEM</button></article>
+<article class="glass-card"><div class="section-kicker">NEW / CUSTOM RESTAURANT FOOD</div><h2>ADD ANY NEW ORDER</h2><div class="form-grid"><input id="customRestaurant" class="input" placeholder="RESTAURANT"><input id="customRestaurantItem" class="input" placeholder="ITEM"><input id="customCalories" class="input" type="number" min="0" placeholder="CALORIES"><input id="customCarbs" class="input" type="number" min="0" step="0.1" placeholder="CARBS G"><input id="customProtein" class="input" type="number" min="0" step="0.1" placeholder="PROTEIN G"><input id="customFat" class="input" type="number" min="0" step="0.1" placeholder="FAT G"><input id="customFiber" class="input" type="number" min="0" step="0.1" placeholder="FIBER G"><div class="restaurant-photo-uploader"><span class="field-label">📸 FOOD PHOTO · OPTIONAL</span><input id="customRestaurantPhoto" class="real-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*"><div id="customRestaurantPhotoPreview" class="upload-preview upload-preview-large"></div><div class="upload-inline-actions"><small id="customRestaurantPhotoName">NO PHOTO SELECTED</small><button id="removeCustomRestaurantPhoto" type="button" class="btn tiny ghost" hidden>REMOVE PHOTO</button></div></div></div><button id="saveCustomRestaurantBtn" class="btn secondary full">SAVE + LOG CUSTOM ITEM</button></article></section>
+<section class="glass-card"><div class="section-kicker">YOUR CUSTOM RESTAURANT VAULT</div><div id="customRestaurantVault" class="mini-log-grid"></div></section>
+<footer class="ccd-footer"><strong>LET’S MAKE...</strong><span>RESTAURANT LOGGING WAY LESS CHAOTIC 🍔✨</span></footer>
+</main>
+<div id="toast" class="toast" aria-live="polite"></div>
+<script src="config.js"></script><script src="data.js"></script><script src="script.js"></script>
+</body></html>
