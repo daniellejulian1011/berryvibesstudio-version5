@@ -441,24 +441,54 @@ function initFasting(){
   toast(`FAST BROKEN + LOGGED · ${round(hrs,1)} HOURS ✨`);render();updateLastMealStatus()
  };
  function openFastDetail(id){const x=(getState().logs||[]).find(r=>r.id===id);if(!x)return;let start=x,brk=x;if(x.type==='fast-start'&&x.completedLogId)brk=(getState().logs||[]).find(r=>r.id===x.completedLogId)||x;if(x.type==='fast'&&x.startLogId)start=(getState().logs||[]).find(r=>r.id===x.startLogId)||x;const dlg=qs('#fastDetailDialog'),c=qs('#fastDetailContent');if(!dlg||!c)return;const completed=(brk.type==='fast'&&brk.breakTime)||start.status==='completed';c.innerHTML=`<div class="section-kicker">INDIVIDUAL FAST LOG</div><h2 style="font-size:clamp(34px,5vw,58px);margin:8px 0 18px">${esc(start.preset||brk.preset||'FAST')} FAST ${completed?'COMPLETE':'ACTIVE'} ⏳</h2><div class="fast-detail-grid"><div><span>STATUS</span><strong>${completed?'COMPLETED ✅':'ACTIVE 🟣'}</strong></div><div><span>START</span><strong>${esc(start.startDate||start.date||brk.startDate||'')} · ${esc(start.startTime||start.time||brk.startTime||'')}</strong></div><div><span>BREAK</span><strong>${completed?`${esc(brk.breakDate||'')} · ${esc(brk.breakTime||'')}`:'NOT BROKEN YET'}</strong></div><div><span>DURATION</span><strong>${completed?formatFastMinutes(+brk.durationMinutes||+start.durationMinutes||Math.round((+brk.durationHours||+start.durationHours||0)*60)):'IN PROGRESS'}</strong></div><div><span>START METHOD</span><strong>${(start.startSource||brk.startSource)==='last-meal'?'AFTER LAST MEAL':'MANUAL'}</strong></div><div><span>LAST MEAL</span><strong>${esc(start.lastMealName||brk.lastMealName||'—')}</strong></div></div><div class="fast-detail-story"><strong>FAST STORY</strong><p>STARTED ${esc(start.startDate||start.date||brk.startDate||'')} AT ${esc(start.startTime||start.time||brk.startTime||'')}${start.lastMealName||brk.lastMealName?` AFTER ${esc(start.lastMealName||brk.lastMealName)}`:''}.${completed?` BROKEN ${esc(brk.breakDate||'')} AT ${esc(brk.breakTime||'')} AFTER ${esc(formatFastMinutes(+brk.durationMinutes||+start.durationMinutes||Math.round((+brk.durationHours||+start.durationHours||0)*60)))}.`:' THIS FAST IS STILL ACTIVE.'}</p></div>`;dlg.showModal()}
+ function normalizeCompletedFastHistory(){
+  const logs=getState().logs||[],starts=logs.filter(x=>x.type==='fast-start'||x.event==='start'||/FAST STARTED/i.test(String(x.name||''))),rows=[],usedStartIds=new Set(),seen=new Set();
+  const byId=new Map(logs.map(x=>[x.id,x]));
+  function parseDurationText(row){
+   const s=`${row?.name||''} ${row?.duration||''} ${row?.summary||''}`.toUpperCase();
+   const hm=s.match(/(\d+(?:\.\d+)?)\s*HR(?:S|OURS?)?(?:\s*(\d+)\s*MIN)?/);if(hm)return Math.round(Number(hm[1])*60+Number(hm[2]||0));
+   const mm=s.match(/(\d+)\s*MIN/);return mm?Number(mm[1]):0
+  }
+  function nearestStart(row){
+   if(row?.startLogId&&byId.has(row.startLogId))return byId.get(row.startLogId);
+   const preset=String(row?.preset||'');
+   const breakDate=row?.breakDate||row?.date||todayISO(),breakTime=row?.breakTime||row?.time||'11:59 PM',breakMs=parseWheelTime(breakTime,breakDate).getTime();
+   let best=null,bestMs=-Infinity;
+   starts.forEach(s=>{if(preset&&s.preset&&String(s.preset)!==preset)return;const sd=s.startDate||s.date||'',st=s.startTime||s.time||'';if(!sd||!st)return;const ms=parseWheelTime(st,sd).getTime();if(ms<=breakMs&&ms>bestMs){best=s;bestMs=ms}});
+   return best
+  }
+  function pushRow(source,startRow=null){
+   const startDate=source.startDate||startRow?.startDate||startRow?.date||source.date||'',startTime=source.startTime||startRow?.startTime||startRow?.time||'';
+   const breakDate=source.breakDate||startRow?.breakDate||source.date||'',breakTime=source.breakTime||source.time||startRow?.breakTime||'';
+   let mins=Number(source.durationMinutes||startRow?.durationMinutes||0);if(!mins){const hrs=Number(source.durationHours||startRow?.durationHours||0);if(hrs>0)mins=Math.round(hrs*60)}
+   if(!mins)mins=parseDurationText(source)||parseDurationText(startRow);
+   if(!mins&&startDate&&startTime&&breakDate&&breakTime)mins=fastDurationMinutes(startDate,startTime,breakDate,breakTime);
+   if(!(mins>0)||!startDate)return;
+   const linkedStartId=source.startLogId||startRow?.id||'',linkedBreakId=source.completedLogId||source.id||startRow?.completedLogId||'';
+   const key=linkedBreakId||`${startDate}|${startTime}|${breakDate}|${breakTime}|${mins}`;if(seen.has(key))return;seen.add(key);if(linkedStartId)usedStartIds.add(linkedStartId);
+   rows.push({...source,id:source.id||linkedBreakId||linkedStartId||key,startDate,startTime,breakDate,breakTime,durationMinutes:mins,durationHours:mins/60,preset:source.preset||startRow?.preset||'FAST',startSource:source.startSource||startRow?.startSource||'',lastMealName:source.lastMealName||startRow?.lastMealName||'',_mins:mins,_hours:mins/60,_recovered:!(source.durationMinutes>0)})
+  }
+  logs.filter(x=>x.type==='fast'||x.event==='break'||/FAST BROKEN/i.test(String(x.name||''))).forEach(x=>pushRow(x,nearestStart(x)));
+  starts.filter(x=>x.status==='completed'||x.breakTime||x.durationMinutes||x.durationHours).forEach(s=>{if(usedStartIds.has(s.id))return;const brk=s.completedLogId&&byId.get(s.completedLogId);pushRow(brk||s,s)});
+  return rows.sort((a,b)=>parseWheelTime(b.startTime||'12:00 AM',b.startDate).getTime()-parseWheelTime(a.startTime||'12:00 AM',a.startDate).getTime())
+ }
  function renderDailyCalculations(){
   const target=qs('#fastDailyCalculations'),stats=qs('#fastDailyStats');if(!target||!stats)return;
-  const completed=(getState().logs||[]).filter(x=>x.type==='fast'&&x.breakTime&&x.startTime).map(x=>{
-   const mins=+x.durationMinutes||fastDurationMinutes(x.startDate,x.startTime,x.breakDate,x.breakTime);
-   return {...x,_mins:mins,_hours:mins/60}
-  }).filter(x=>x._mins>0).sort((a,b)=>parseWheelTime(b.startTime,b.startDate)-parseWheelTime(a.startTime,a.startDate));
+  const completed=normalizeCompletedFastHistory();
   const groups=new Map();
   completed.forEach(x=>{const day=x.startDate||x.date||x.breakDate||todayISO();if(!groups.has(day))groups.set(day,[]);groups.get(day).push(x)});
   const days=[...groups.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
   const totalMinutes=completed.reduce((n,x)=>n+x._mins,0),avgMinutes=completed.length?Math.round(totalMinutes/completed.length):0,longest=completed.reduce((best,x)=>x._mins>(best?best._mins:0)?x:best,null);
-  stats.innerHTML=completed.length?`<article><span>COMPLETED FASTS</span><strong>${completed.length}</strong></article><article><span>AVERAGE FAST</span><strong>${formatFastMinutes(avgMinutes)}</strong></article><article><span>LONGEST FAST</span><strong>${longest?formatFastMinutes(longest._mins):'—'}</strong></article>`:`<article><span>COMPLETED FASTS</span><strong>0</strong></article><article><span>AVERAGE FAST</span><strong>—</strong></article><article><span>LONGEST FAST</span><strong>—</strong></article>`;
-  if(!days.length){target.innerHTML='<div class="empty-state fasting-daily-empty">BREAK YOUR FIRST FAST AND THE EXACT DAILY CALCULATION WILL APPEAR HERE. ⏳</div>';return}
+  stats.innerHTML=completed.length?`<article><span>ALL COMPLETED FASTS</span><strong>${completed.length}</strong></article><article><span>AVERAGE FAST</span><strong>${formatFastMinutes(avgMinutes)}</strong></article><article><span>LONGEST FAST</span><strong>${longest?formatFastMinutes(longest._mins):'—'}</strong></article>`:`<article><span>ALL COMPLETED FASTS</span><strong>0</strong></article><article><span>AVERAGE FAST</span><strong>—</strong></article><article><span>LONGEST FAST</span><strong>—</strong></article>`;
+  if(!days.length){target.innerHTML='<div class="empty-state fasting-daily-empty">NO COMPLETED FASTS COULD BE CALCULATED YET. ONCE A START + BREAK ARE SAVED, THEY WILL APPEAR HERE AUTOMATICALLY. ⏳</div>';return}
   target.innerHTML=days.map(([day,rows])=>{
    const total=rows.reduce((n,x)=>n+x._mins,0),main=rows[0],goal=Math.max(1,fastGoalHours(main)*60),pct=Math.min(100,Math.round(total/goal*100)),dateLabel=new Date(`${day}T12:00:00`).toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric',year:'numeric'}).toUpperCase();
-   const detail=rows.map(x=>`<div class="fasting-daily-equation"><span>${esc(x.startTime)}</span><b>→</b><span>${esc(x.breakDate!==x.startDate?`${x.breakDate} · `:'')}${esc(x.breakTime)}</span><strong>= ${formatFastMinutes(x._mins)}</strong><button type="button" class="fasting-inline-view" data-view-fast="${esc(x.id)}">VIEW</button></div>`).join('');
-   return `<article class="fasting-day-card"><div class="fasting-day-top"><div><span class="fasting-day-date">${esc(dateLabel)}</span><strong>${formatFastMinutes(total)}</strong><small>${round(total/60,1)} HOURS TOTAL</small></div><div class="fasting-day-ring" style="--fast-pct:${pct}%"><span>${pct}%</span></div></div><div class="fasting-day-progress"><i style="width:${pct}%"></i></div><div class="fasting-day-goal">${esc(main.preset||'FAST')} GOAL · ${fastGoalHours(main)} HRS${rows.length>1?` · ${rows.length} FASTS THIS DAY`:''}</div>${detail}</article>`
+   const detail=rows.map(x=>`<div class="fasting-daily-equation"><span>${esc(x.startTime||'START')}</span><b>→</b><span>${esc((x.breakDate&&x.breakDate!==x.startDate)?`${x.breakDate} · `:'')}${esc(x.breakTime||'BREAK')}</span><strong>= ${formatFastMinutes(x._mins)}</strong><button type="button" class="fasting-inline-view" data-view-fast="${esc(x.id)}">VIEW</button></div>`).join('');
+   const recovered=rows.some(x=>x._recovered)?'<span class="fasting-history-recovered">PREVIOUS LOG RECOVERED ✓</span>':'';
+   return `<article class="fasting-day-card"><div class="fasting-day-top"><div><span class="fasting-day-date">${esc(dateLabel)}</span><strong>${formatFastMinutes(total)}</strong><small>${round(total/60,1)} HOURS TOTAL · ${rows.length} ${rows.length===1?'FAST':'FASTS'}</small></div><div class="fasting-day-ring" style="--fast-pct:${pct}%"><span>${pct}%</span></div></div><div class="fasting-day-progress"><i style="width:${pct}%"></i></div><div class="fasting-day-goal">${esc(main.preset||'FAST')} GOAL · ${fastGoalHours(main)} HRS ${recovered}</div>${detail}</article>`
   }).join('');
  }
+
  function render(){
   const a=(getState().logs||[]).filter(x=>x.type==='fast'||x.type==='fast-start').slice(0,12);
   qs('#fastHistory').innerHTML=a.length?a.map(x=>x.type==='fast-start'?`<article class="log-card fasting-event-card fast-start-event"><span class="pill">START LOG</span><strong>${esc(x.preset)} FAST STARTED</strong><span>${esc(x.startDate||x.date)} · ${esc(x.startTime||x.time)}</span><span class="log-extra">${x.status==='completed'?'✅ COMPLETED':'🟣 ACTIVE'}${x.startSource==='last-meal'?` · 🍽️ AFTER ${esc(x.lastMealName||'LAST MEAL')}`:''}</span><button type="button" class="btn tiny ghost fast-view-btn" data-view-fast="${esc(x.id)}">VIEW FULL LOG</button></article>`:`<article class="log-card fasting-event-card fast-break-event"><span class="pill">BREAK LOG</span><strong>${esc(x.preset)} FAST BROKEN · ${formatFastMinutes(+x.durationMinutes||Math.round((+x.durationHours||0)*60))}</strong><span>${esc(x.startDate)} ${esc(x.startTime)} → ${esc(x.breakDate)} ${esc(x.breakTime)}</span>${x.startSource==='last-meal'?`<span class="log-extra">🍽️ STARTED AFTER LAST MEAL · ${esc(x.lastMealName||'LAST MEAL')}</span>`:''}<button type="button" class="btn tiny ghost fast-view-btn" data-view-fast="${esc(x.id)}">VIEW FULL LOG</button></article>`).join(''):'<div class="empty-state">NO FAST STARTS OR BREAKS LOGGED YET.</div>';
