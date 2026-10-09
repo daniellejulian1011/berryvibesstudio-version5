@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" data-theme="berry-cream">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Berry Vibes Studio Cozy Core Diet interactive website">
+<title>Restaurants · Berry Vibes CCD</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="" data-page="restaurants">
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div><div class="ambient ambient-c"></div>
+<nav class="top-nav"><a class="brand" href="index.html"><span class="brand-orb">BV</span><span>BERRY VIBES × CCD</span></a><div class="nav-scroll"><a class="nav-link" href="index.html">TODAY</a><a class="nav-link" href="foods.html">FOOD</a><a class="nav-link" href="recipes.html">RECIPES</a><a class="nav-link" href="exercise.html">MOVE</a><a class="nav-link" href="fasting.html">FASTING</a><a class="nav-link" href="restaurants.html">RESTAURANTS</a><a class="nav-link" href="grocery.html">GROCERY</a><a class="nav-link" href="battle.html">BATTLE</a><a class="nav-link" href="facts.html">FACTS</a><a class="nav-link" href="calendar.html">CALENDAR</a><a class="nav-link" href="period.html">PERIOD</a></div><a class="nav-auth" data-auth-link href="login.html">SIGN IN</a></nav>
+<main class="page-shell restaurant-page-v77">
+<section class="page-head restaurant-head-v77"><p class="eyebrow">RESTAURANT VAULT · MULTI-ORDER MODE</p><h1>FAST FOOD + RESTAURANT QUEST 🍟☕🥞</h1><p>PICK MORE THAN ONE ITEM, MODIFY ORDERS, THEN LOG THE WHOLE RESTAURANT RUN AT ONE TIME.</p></section>
+
+<section id="restaurantChains" class="restaurant-grid"></section>
+
+<section class="glass-card restaurant-menu-shell">
+  <div class="section-kicker">SAVED RESTAURANT MENU</div>
+  <div class="restaurant-menu-head">
+    <div>
+      <h2>SEE + PICK EVERY SAVED ORDER 🍔✨</h2>
+      <p>TAP USE TO EDIT QUANTITY / MODIFY IT, OR ADD AN ITEM STRAIGHT TO YOUR RESTAURANT TRAY.</p>
+    </div>
+    <input id="restaurantMenuSearch" class="input" placeholder="SEARCH RESTAURANT OR ITEM">
+  </div>
+  <div id="restaurantSavedMenu" class="restaurant-item-grid"></div>
+</section>
+
+<section class="glass-card restaurant-tray-shell">
+  <div class="restaurant-tray-head">
+    <div><div class="section-kicker">MULTI-FOOD RESTAURANT LOG</div><h2>MY RESTAURANT TRAY ✨</h2><p>ADD AS MANY SAVED, CUSTOM, OR MODIFIED ORDERS AS YOU WANT. EACH ITEM KEEPS ITS OWN QUANTITY + NUTRITION.</p></div>
+    <span id="restaurantTrayCount" class="pill">0 ITEMS</span>
+  </div>
+  <div id="restaurantTray" class="restaurant-tray-list"><div class="empty-state">YOUR RESTAURANT TRAY IS EMPTY — ADD AN ITEM BELOW.</div></div>
+  <div id="restaurantTrayTotals" class="restaurant-tray-totals"></div>
+  <div class="restaurant-batch-time">
+    <div><span class="field-label">WHEN DID YOU EAT THIS RESTAURANT ORDER?</span><small>EVERY ITEM IN THE TRAY LOGS AT THIS SAME TIME.</small></div>
+    <div class="time-wheel" data-time-wheel id="restaurantTime"></div>
+  </div>
+  <div class="restaurant-tray-actions"><button id="clearRestaurantTrayBtn" type="button" class="btn ghost">CLEAR TRAY</button><button id="logRestaurantTrayBtn" type="button" class="btn primary">LOG ALL RESTAURANT ITEMS ✨</button></div>
+</section>
+
+<section class="two-col wide-left restaurant-workspace-v77">
+  <article class="glass-card">
+    <div class="section-kicker">SAVED ITEM LOGGER</div><h2>PICK + ADD AN ORDER</h2>
+    <div class="form-grid"><select id="restaurantSelect" class="input"></select><select id="restaurantItemSelect" class="input"></select></div>
+    <div id="restaurantPresetPreview" class="selected-food"></div>
+    <label class="field-label">QUANTITY <span id="restaurantQtyLabel">1×</span></label><input id="restaurantQty" type="range" min="0.25" max="4" step="0.25" value="1">
+    <div class="restaurant-primary-actions"><button id="addRestaurantPresetToTrayBtn" class="btn primary">+ ADD THIS ORDER TO TRAY</button><button id="openRestaurantModificationBtn" class="btn secondary">MODIFY THIS ORDER ✏️</button></div>
+  </article>
+
+  <article class="glass-card">
+    <div class="section-kicker">NEW / CUSTOM RESTAURANT FOOD</div><h2>ADD ANY NEW ORDER</h2>
+    <div class="form-grid"><input id="customRestaurant" class="input" placeholder="RESTAURANT"><input id="customRestaurantItem" class="input" placeholder="ITEM"><input id="customCalories" class="input" type="number" min="0" placeholder="CALORIES"><input id="customCarbs" class="input" type="number" min="0" step="0.1" placeholder="CARBS G"><input id="customProtein" class="input" type="number" min="0" step="0.1" placeholder="PROTEIN G"><input id="customFat" class="input" type="number" min="0" step="0.1" placeholder="FAT G"><input id="customFiber" class="input" type="number" min="0" step="0.1" placeholder="FIBER G"><div class="restaurant-photo-uploader"><span class="field-label">📸 FOOD PHOTO · OPTIONAL</span><input id="customRestaurantPhoto" class="real-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*"><div id="customRestaurantPhotoPreview" class="upload-preview upload-preview-large"></div><div class="upload-inline-actions"><small id="customRestaurantPhotoName">NO PHOTO SELECTED</small><button id="removeCustomRestaurantPhoto" type="button" class="btn tiny ghost" hidden>REMOVE PHOTO</button></div></div></div>
+    <div class="restaurant-primary-actions"><button id="saveCustomRestaurantBtn" class="btn secondary">SAVE TO VAULT</button><button id="saveCustomRestaurantToTrayBtn" class="btn primary">SAVE + ADD TO TRAY ✨</button></div>
+  </article>
+</section>
+
+<section id="restaurantModificationSection" class="glass-card restaurant-modifier-shell">
+  <div class="restaurant-modifier-head"><div><div class="section-kicker">RESTAURANT ORDER MODIFICATION</div><h2>THE ONLY THING I CHANGED FROM MY ORDER WAS.... ✏️</h2><p>TYPE NATURALLY. ADD / REMOVE TSP, TBSP, CUPS, OZ, GRAMS, SLICES, SERVINGS, OR OTHER SAVED INGREDIENT UNITS — THE CALORIE + MACRO TOTAL RECALCULATES LIVE.</p></div><span id="restaurantModifierSource" class="pill">PICK AN ORDER FIRST</span></div>
+  <textarea id="restaurantChangeNote" class="input restaurant-change-note" rows="4" placeholder="EXAMPLE: I REMOVED 1 SLICE CHEESE, ADDED 2 TBSP SAUCE, AND USED 3 OZ CHICKEN INSTEAD."></textarea>
+  <input id="modifiedRestaurantName" class="input" placeholder="OPTIONAL NAME FOR THIS VERSION">
+  <div class="restaurant-mod-calorie-compare"><div><span>ORIGINAL ORDER</span><strong id="restaurantBaseCalories">— KCAL</strong></div><b>→</b><div><span>YOUR MODIFIED ORDER</span><strong id="restaurantModifiedCalories">— KCAL</strong><small id="restaurantCalorieDelta">0 KCAL CHANGE</small></div></div>
+  <div id="restaurantModNutrition" class="mini-macros"></div>
+  <div class="section-kicker gap-top">CALCULATE WHAT CHANGED</div><p class="tiny-note">THE TEXT BOX RECALCULATES LIVE. YOU CAN ALSO ADD / REMOVE A SPECIFIC INGREDIENT MANUALLY BELOW.</p>
+  <div class="restaurant-mod-controls"><select id="restaurantModIngredientSelect" class="input"></select><select id="restaurantModIngredientAction" class="input"><option value="add">ADD</option><option value="remove">REMOVE</option></select><input id="restaurantModIngredientQty" class="input" value="1" inputmode="decimal" placeholder="AMOUNT"><select id="restaurantModIngredientUnit" class="input"><option value="AUTO">AUTO UNIT</option><option>TSP</option><option>TBSP</option><option>CUP</option><option>OZ</option><option>LB</option><option>G</option><option>ML</option><option>SLICE</option><option>ITEM</option><option>SERVING</option></select><button id="addRestaurantModIngredientBtn" type="button" class="btn secondary">APPLY + RECALCULATE</button></div>
+  <div id="restaurantModAdjustments" class="mod-adjustments"></div>
+  <div class="restaurant-mod-actions"><button id="saveModifiedRestaurantBtn" type="button" class="btn secondary">SAVE MODIFIED ORDER</button><button id="addModifiedRestaurantToTrayBtn" type="button" class="btn primary">+ ADD MODIFIED ORDER TO TRAY</button><button id="clearRestaurantModificationBtn" type="button" class="btn ghost">CLEAR</button></div>
+</section>
+
+<section class="glass-card"><div class="section-kicker">MY MODIFIED RESTAURANT ORDERS</div><div id="modifiedRestaurantVault" class="modified-restaurant-grid"></div></section>
+<section class="glass-card"><div class="section-kicker">YOUR CUSTOM RESTAURANT VAULT</div><div id="customRestaurantVault" class="mini-log-grid"></div></section>
+<footer class="ccd-footer"><strong>LET’S MAKE...</strong><span>ONE RESTAURANT RUN, MULTIPLE ITEMS, ZERO CHAOS 🍔✨</span></footer>
+</main>
+<div id="toast" class="toast" aria-live="polite"></div>
+<script src="config.js"></script><script src="data.js"></script><script src="script.js"></script>
+</body></html>
